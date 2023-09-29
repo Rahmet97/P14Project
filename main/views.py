@@ -5,7 +5,9 @@ from django.http import JsonResponse
 from django.views import View
 from django.contrib import messages
 from django.db.models import Q
-from .models import Product, ShoppingCard
+
+from .forms import ProductForm
+from .models import Product, ShoppingCard, Picture
 from .utils import increment_count, decrement_count
 
 
@@ -83,3 +85,35 @@ def shop(request):
 
 def about(request):
     return render(request, "about.html")
+
+
+class AddProductView(View):
+    template_name = 'add_product.html'
+    context = {}
+
+    def get(self, request):
+        form = ProductForm()
+        self.context.update({'form': form})
+        return render(request, self.template_name, self.context)
+
+    def post(self, request):
+        form = ProductForm(request.POST, request.FILES)
+        if form.is_valid():
+            name = form.cleaned_data.get('name')
+            price = form.cleaned_data.get('price')
+            description = form.cleaned_data.get('description')
+            product = Product.objects.create(
+                name=name,
+                price=price,
+                description=description,
+                author=request.user
+            )
+            product.save()
+            images = request.FILES.getlist('image')
+            for image in images:
+                picture = Picture.objects.create(
+                    image=image,
+                    product=product
+                )
+                picture.save()
+        return redirect('/add-product')
