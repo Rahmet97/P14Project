@@ -3,6 +3,7 @@ import json
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.views import View
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.contrib import messages
 from django.db.models import Q
 
@@ -87,33 +88,69 @@ def about(request):
     return render(request, "about.html")
 
 
-class AddProductView(View):
+# class AddProductView(View):
+#     template_name = 'add_product.html'
+#     context = {}
+#
+#     def get(self, request):
+#         form = ProductForm()
+#         self.context.update({'form': form})
+#         return render(request, self.template_name, self.context)
+#
+#     def post(self, request):
+#         form = ProductForm(request.POST, request.FILES)
+#         if form.is_valid():
+#             name = form.cleaned_data.get('name')
+#             price = form.cleaned_data.get('price')
+#             description = form.cleaned_data.get('description')
+#             product = Product.objects.create(
+#                 name=name,
+#                 price=price,
+#                 description=description,
+#                 author=request.user
+#             )
+#             product.save()
+#             images = request.FILES.getlist('image')
+#             for image in images:
+#                 picture = Picture.objects.create(
+#                     image=image,
+#                     product=product
+#                 )
+#                 picture.save()
+#         return redirect('/add-product')
+
+
+class AddProductView(CreateView):
+    model = Product
     template_name = 'add_product.html'
-    context = {}
+    form_class = ProductForm
+    # fields = ('name', 'price', 'description')
 
     def get(self, request):
-        form = ProductForm()
-        self.context.update({'form': form})
-        return render(request, self.template_name, self.context)
+        form = self.form_class()
+        return render(request, self.template_name, {'form': form})
 
     def post(self, request):
-        form = ProductForm(request.POST, request.FILES)
+        form = self.form_class(request.POST, request.FILES)
         if form.is_valid():
-            name = form.cleaned_data.get('name')
-            price = form.cleaned_data.get('price')
-            description = form.cleaned_data.get('description')
+            name = form.cleaned_data['name']
+            price = form.cleaned_data['price']
+            description = form.cleaned_data['description']
+            author = request.user
+
             product = Product.objects.create(
                 name=name,
                 price=price,
                 description=description,
-                author=request.user
+                author=author
             )
-            product.save()
-            images = request.FILES.getlist('image')
+            images = form.files.getlist('image')
+            print('images:', images)
             for image in images:
                 picture = Picture.objects.create(
                     image=image,
                     product=product
                 )
                 picture.save()
-        return redirect('/add-product')
+
+            return redirect('/add-product')

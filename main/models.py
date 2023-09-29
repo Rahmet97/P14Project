@@ -1,3 +1,5 @@
+from typing import Union
+
 from django.db import models
 from django.contrib.auth import get_user_model
 
@@ -9,6 +11,10 @@ class Product(models.Model):
     price = models.FloatField()
     description = models.TextField()
     author = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def create(self, validated_data):
+        print(validated_data)
+        return super().save(**validated_data)
 
 
 class Picture(models.Model):
