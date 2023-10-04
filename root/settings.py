@@ -41,6 +41,7 @@ INSTALLED_APPS = [
 
     # custom
     'main',
+    'accounts',
 ]
 
 MIDDLEWARE = [
@@ -144,6 +145,7 @@ FILE_UPLOAD_HANDLERS = [
 ]
 
 LOGIN_URL = '/accounts/login'
+AUTH_USER_MODEL = 'accounts.UserData'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
