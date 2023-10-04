@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="furni_db@localhost" uuid="f3af081b-5501-4d4a-ad7e-4349164ea779">
+    <data-source source="LOCAL" name="furni_db@localhost" uuid="9328ecb9-36e3-454e-a7f8-e45c5acc19a6">
       <driver-ref>postgresql</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.postgresql.Driver</jdbc-driver>

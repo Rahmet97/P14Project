@@ -1,6 +1,6 @@
 import json
 
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, reverse
 from django.http import JsonResponse
 from django.views import View
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
@@ -18,7 +18,13 @@ class HomeView(View):
 
     def get(self, request):
         products = Product.objects.all()[:3]
-        self.context.update({'products': products})
+        product_data = []
+        for product in products:
+            image = Picture.objects.filter(product=product).first()
+            product.image = image
+            print(product.image.image.url)
+            product_data.append(product)
+        self.context.update({'products': product_data})
         return render(request, self.template_name, self.context)
 
     def post(self, request):
@@ -80,44 +86,24 @@ class DecrementCountView(View):
         return JsonResponse({'result': result})
 
 
-def shop(request):
-    return render(request, "shop.html")
+class ShopView(View):
+    template_name = 'shop.html'
+    context = {}
+
+    def get(self, request):
+        products = Product.objects.all()
+        product_data = []
+        for product in products:
+            image = Picture.objects.filter(product=product).first()
+            product.image = image
+            print(product.image.image.url)
+            product_data.append(product)
+        self.context.update({'products': product_data})
+        return render(request, self.template_name, self.context)
 
 
 def about(request):
     return render(request, "about.html")
-
-
-# class AddProductView(View):
-#     template_name = 'add_product.html'
-#     context = {}
-#
-#     def get(self, request):
-#         form = ProductForm()
-#         self.context.update({'form': form})
-#         return render(request, self.template_name, self.context)
-#
-#     def post(self, request):
-#         form = ProductForm(request.POST, request.FILES)
-#         if form.is_valid():
-#             name = form.cleaned_data.get('name')
-#             price = form.cleaned_data.get('price')
-#             description = form.cleaned_data.get('description')
-#             product = Product.objects.create(
-#                 name=name,
-#                 price=price,
-#                 description=description,
-#                 author=request.user
-#             )
-#             product.save()
-#             images = request.FILES.getlist('image')
-#             for image in images:
-#                 picture = Picture.objects.create(
-#                     image=image,
-#                     product=product
-#                 )
-#                 picture.save()
-#         return redirect('/add-product')
 
 
 class AddProductView(CreateView):
@@ -154,3 +140,9 @@ class AddProductView(CreateView):
                 picture.save()
 
             return redirect('/add-product')
+
+
+class DeleteProductView(DeleteView):
+    model = Product
+    template_name = ''
+    success_url = '/'
