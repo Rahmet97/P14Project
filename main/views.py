@@ -1,4 +1,5 @@
 import json
+import requests
 
 from django.shortcuts import render, redirect, reverse
 from django.http import JsonResponse
@@ -17,14 +18,18 @@ class HomeView(View):
     context = {}
 
     def get(self, request):
-        products = Product.objects.all()[:3]
-        product_data = []
-        for product in products:
-            image = Picture.objects.filter(product=product).first()
-            product.image = image
-            print(product.image.image.url)
-            product_data.append(product)
-        self.context.update({'products': product_data})
+        # products = Product.objects.all()[:3]
+        # product_data = []
+        # for product in products:
+        #     image = Picture.objects.filter(product=product).first()
+        #     product.image = image
+        #     print(product.image.image.url)
+        #     product_data.append(product)
+        # self.context.update({'products': product_data})
+        protocol = 'https://' if request.is_secure() else 'http://'
+        url = protocol + request.META.get('HTTP_HOST') + reverse('product')
+        products = requests.get(url)
+        self.context.update({'products': products.json()['data']})
         return render(request, self.template_name, self.context)
 
     def post(self, request):
@@ -146,3 +151,26 @@ class DeleteProductView(DeleteView):
     model = Product
     template_name = ''
     success_url = '/'
+
+
+class HelloAPIView(View):
+    def get(self, request):
+        return JsonResponse({'success': True, 'message': 'Hello World!'})
+
+
+class ProductAPIView(View):
+
+    def get(self, request):
+        products = Product.objects.all()[:3]
+        products_data = []
+        for product in products:
+            image = Picture.objects.filter(product=product).first()
+            product_dict = {
+                'name': product.name,
+                'description': product.description,
+                'price': product.price,
+                'author': product.author.id,
+                'image': image.image.url
+            }
+            products_data.append(product_dict)
+        return JsonResponse({'data': products_data})

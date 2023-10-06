@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-674@=th)r(x&nxwwbgi2nq!^y0%67_@n1b%qv2y^hq=%-z2)hv
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -42,12 +42,17 @@ INSTALLED_APPS = [
     # custom
     'main',
     'accounts',
+
+    # third-party
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
+    'main.middleware.IPRestrictedMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -90,6 +95,12 @@ DATABASES = {
     }
 }
 
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOWED_ORIGINS = [
+    "https://b4f4-178-218-201-17.ngrok-free.app",
+    # Add any other allowed origins here as needed
+]
+CORS_ALLOW_CREDENTIALS = True
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
