@@ -166,6 +166,7 @@ class ProductAPIView(View):
         for product in products:
             image = Picture.objects.filter(product=product).first()
             product_dict = {
+                'id': product.id,
                 'name': product.name,
                 'description': product.description,
                 'price': product.price,
