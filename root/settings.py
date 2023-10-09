@@ -87,9 +87,9 @@ WSGI_APPLICATION = 'root.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'furni_db',
-        'USER': 'postgres',
-        'PASSWORD': 'postgres',
+        'NAME': 'p14_db',
+        'USER': 'p14_db_admin',
+        'PASSWORD': 'aB1234cd.d',
         'HOST': 'localhost',
         'PORT': 5432
     }
