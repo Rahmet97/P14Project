@@ -54,7 +54,9 @@ class ShoppingCartView(View):
         data = []
         for product in products:
             shop = ShoppingCard.objects.get(Q(user=request.user) & Q(product=product))
+            image = Picture.objects.filter(product=product).first()
             product.count = shop.count
+            product.image = image
             data.append(product)
         self.context.update({'products': data})
         return render(request, self.template_name, self.context)
